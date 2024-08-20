@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.model.Film;
 
-
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,7 +27,7 @@ public class FilmControllerTest {
                 LocalDate.of(1977, 5, 25),
                 180
         );
-        ResponseEntity<Film> response = restTemplate.postForEntity( "/films" , film, Film.class);
+        ResponseEntity<Film> response = restTemplate.postForEntity("/films", film, Film.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody().getId());
     }
@@ -39,9 +38,9 @@ public class FilmControllerTest {
                 "",
                 "Long long ago..",
                 LocalDate.of(1977, 5, 25),
-            180
+                180
         );
-        ResponseEntity<Film> response = restTemplate.postForEntity( "/films" , film, Film.class);
+        ResponseEntity<Film> response = restTemplate.postForEntity("/films", film, Film.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
@@ -53,7 +52,7 @@ public class FilmControllerTest {
                 LocalDate.of(1800, 5, 25),
                 100
         );
-        ResponseEntity<Film> response = restTemplate.postForEntity( "/films" , film, Film.class);
+        ResponseEntity<Film> response = restTemplate.postForEntity("/films", film, Film.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
@@ -65,7 +64,7 @@ public class FilmControllerTest {
                 LocalDate.of(1977, 5, 25),
                 -100
         );
-        ResponseEntity<Film> response = restTemplate.postForEntity( "/films" , film, Film.class);
+        ResponseEntity<Film> response = restTemplate.postForEntity("/films", film, Film.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 

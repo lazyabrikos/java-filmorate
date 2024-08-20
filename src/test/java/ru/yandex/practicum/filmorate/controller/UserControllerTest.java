@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -28,7 +27,7 @@ public class UserControllerTest {
                 "vovag",
                 LocalDate.of(2003, 1, 4)
         );
-        ResponseEntity<User> response = restTemplate.postForEntity( "/users" , user, User.class);
+        ResponseEntity<User> response = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody().getId());
     }
@@ -41,7 +40,7 @@ public class UserControllerTest {
                 "vovag",
                 LocalDate.of(2003, 1, 4)
         );
-        ResponseEntity<User> response = restTemplate.postForEntity( "/users" , user, User.class);
+        ResponseEntity<User> response = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
@@ -53,7 +52,7 @@ public class UserControllerTest {
                 "vovag",
                 LocalDate.of(2025, 1, 4)
         );
-        ResponseEntity<User> response = restTemplate.postForEntity( "/users" , user, User.class);
+        ResponseEntity<User> response = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
@@ -65,7 +64,7 @@ public class UserControllerTest {
                 "vovag",
                 LocalDate.of(2003, 1, 4)
         );
-        ResponseEntity<User> response = restTemplate.postForEntity( "/users" , user, User.class);
+        ResponseEntity<User> response = restTemplate.postForEntity("/users", user, User.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
