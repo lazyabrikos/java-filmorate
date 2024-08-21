@@ -15,6 +15,21 @@ import java.time.LocalDate;
 @Data
 public class Film {
 
+    private Long id;
+
+    @NotBlank(message = "Name could not be blank.")
+    private String name;
+
+    @Size(max = 200)
+    private String description;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @ValidReleaseDate(message = "Release date could not be earlier then December 28, 1985")
+    private LocalDate releaseDate;
+
+    @Positive(message = "Duration must be positive.")
+    private int duration;
+
     public Film(String name, String description, LocalDate releaseDate, int duration) {
         this.name = name;
         this.description = description;
@@ -22,18 +37,4 @@ public class Film {
         this.duration = duration;
     }
 
-    Long id;
-
-    @NotBlank(message = "Name could not be blank.")
-    String name;
-
-    @Size(max = 200)
-    String description;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @ValidReleaseDate(message = "Release date could not be earlier then December 28, 1985")
-    LocalDate releaseDate;
-
-    @Positive(message = "Duration must be positive.")
-    int duration;
 }

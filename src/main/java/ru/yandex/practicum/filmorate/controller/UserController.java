@@ -17,46 +17,41 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final Map<Long, User> users = new HashMap<>();
+    private long idGenerator = 0;
 
     @GetMapping
     public Collection<User> findAll() {
-        logger.trace("Got request: get all films");
+        logger.info("Пришел Get запрос всех пользователей");
         return users.values();
     }
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        logger.trace("Got request: add new user");
-        user.setId(getNextId());
+        logger.info("Пришел Post запрос /users с телом: {}", user);
+        user.setId(++idGenerator);
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
         users.put(user.getId(), user);
-        logger.info("New user successfully added with id = {}", user.getId());
+        logger.info("Отправлен ответ Post /users с телом: {}", user);
+        logger.info("Новый пользователь успешно добавлен с id = {}", user.getId());
+
         return user;
     }
 
     @PutMapping
     public User update(@Valid @RequestBody User newUser) {
+        logger.info("Пришел запрос Put /users с телом: {}", newUser);
         if (users.containsKey(newUser.getId())) {
             if (newUser.getName() == null || newUser.getName().isBlank()) {
                 newUser.setName(newUser.getLogin());
             }
             users.put(newUser.getId(), newUser);
-            logger.info("User with id = {} successfully updates", newUser.getId());
+            logger.info("Отправлен ответ Put /users с телом: {}", newUser);
+            logger.info("Пользователь с id = {} успешно обновлен", newUser.getId());
             return newUser;
         }
-        logger.warn("No film found with id");
+        logger.warn("Пользователь с таким id не найдем");
         throw new NotFoundException("No user with id = " + newUser.getId());
     }
-
-    private long getNextId() {
-        long currentMaxId = users.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
-    }
-
 }

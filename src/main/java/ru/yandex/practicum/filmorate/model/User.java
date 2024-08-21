@@ -11,21 +11,22 @@ import java.time.LocalDate;
 
 @Data
 public class User {
-    Long id;
+
+    private Long id;
 
     @NotBlank
     @Email(message = "Wrong format of email")
-    String email;
+    private String email;
 
     @NotBlank(message = "Login could not be blank.")
     @NoSpaces(message = "Login could not contain spaces")
-    String login;
+    private String login;
 
-    String name;
+    private String name;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Past(message = "Birthday could not be in future.")
-    LocalDate birthday;
+    private LocalDate birthday;
 
     public User(String email, String login, String name, LocalDate birthday) {
         this.email = email;

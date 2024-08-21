@@ -17,41 +17,35 @@ public class FilmController {
 
     private static final Logger logger = LoggerFactory.getLogger(FilmController.class);
     private final Map<Long, Film> films = new HashMap<>();
+    private long idGenerator = 0;
 
     @GetMapping
     public Collection<Film> findAll() {
-        logger.trace("Got request: get all films");
+        logger.info("Пришел Get запрос всех фильмов");
         return films.values();
     }
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        logger.trace("Got request: add new film");
-        film.setId(getNextId());
+        logger.info("Пришел Post запрос /films с телом: {}", film);
+        film.setId(++idGenerator);
         films.put(film.getId(), film);
-        logger.info("New film successfully added with id = {}", film.getId());
+        logger.info("Отправлен ответ Post /films с телом: {}", film);
+        logger.info("Новый фильм успешно добавлен с id = {}", film.getId());
         return film;
     }
 
     @PutMapping
     public Film update(@Valid @RequestBody Film newFilm) {
+        logger.info("Пришел запрос Put /films с телом: {}", newFilm);
         if (films.containsKey(newFilm.getId())) {
             films.put(newFilm.getId(), newFilm);
-            logger.info("Film with id = {} successfully updates", newFilm.getId());
+            logger.info("Отправлен ответ Put /films с телом: {}", newFilm);
+            logger.info("Фильм с id = {} успешно обновлен", newFilm.getId());
             return newFilm;
         }
 
-        logger.warn("No film found with id");
+        logger.warn("Фильм с таким id не найдем");
         throw new NotFoundException("No film with id = " + newFilm.getId());
-    }
-
-
-    private long getNextId() {
-        long currentMaxId = films.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
     }
 }
