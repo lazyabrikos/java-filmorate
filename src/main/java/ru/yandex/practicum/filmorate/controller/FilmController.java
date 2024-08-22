@@ -31,7 +31,6 @@ public class FilmController {
         film.setId(++idGenerator);
         films.put(film.getId(), film);
         logger.info("Отправлен ответ Post /films с телом: {}", film);
-        logger.info("Новый фильм успешно добавлен с id = {}", film.getId());
         return film;
     }
 
@@ -41,7 +40,6 @@ public class FilmController {
         if (films.containsKey(newFilm.getId())) {
             films.put(newFilm.getId(), newFilm);
             logger.info("Отправлен ответ Put /films с телом: {}", newFilm);
-            logger.info("Фильм с id = {} успешно обновлен", newFilm.getId());
             return newFilm;
         }
 

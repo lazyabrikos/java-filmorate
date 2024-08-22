@@ -34,8 +34,6 @@ public class UserController {
         }
         users.put(user.getId(), user);
         logger.info("Отправлен ответ Post /users с телом: {}", user);
-        logger.info("Новый пользователь успешно добавлен с id = {}", user.getId());
-
         return user;
     }
 
@@ -48,7 +46,6 @@ public class UserController {
             }
             users.put(newUser.getId(), newUser);
             logger.info("Отправлен ответ Put /users с телом: {}", newUser);
-            logger.info("Пользователь с id = {} успешно обновлен", newUser.getId());
             return newUser;
         }
         logger.warn("Пользователь с таким id не найдем");
