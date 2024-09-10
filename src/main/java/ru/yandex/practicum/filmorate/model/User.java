@@ -8,13 +8,16 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.validators.NoSpaces;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class User {
 
     private Long id;
+    private Set<Long> friends = new HashSet<>();
 
-    @NotBlank
+    @NotBlank(message = "Email could not be blank")
     @Email(message = "Wrong format of email")
     private String email;
 

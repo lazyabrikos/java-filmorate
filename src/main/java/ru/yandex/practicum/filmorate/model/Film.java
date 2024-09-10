@@ -8,6 +8,8 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.validators.ValidReleaseDate;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Film.
@@ -16,6 +18,7 @@ import java.time.LocalDate;
 public class Film {
 
     private Long id;
+    private Set<Long> likes = new HashSet<>();
 
     @NotBlank(message = "Name could not be blank.")
     private String name;
