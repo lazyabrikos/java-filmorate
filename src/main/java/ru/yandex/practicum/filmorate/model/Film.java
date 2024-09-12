@@ -19,7 +19,6 @@ import java.util.Set;
 public class Film {
 
     private Long id;
-
     @JsonIgnore
     private Set<Long> likes = new HashSet<>();
 

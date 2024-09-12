@@ -16,7 +16,6 @@ import java.util.Set;
 public class User {
 
     private Long id;
-    
     @JsonIgnore
     private Set<Long> friends = new HashSet<>();
 
