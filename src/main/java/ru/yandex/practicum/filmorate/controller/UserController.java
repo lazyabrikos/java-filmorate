@@ -22,59 +22,66 @@ public class UserController {
 
     @GetMapping
     public Collection<User> findAll() {
-        logger.info("Пришел Get запрос всех пользователей");
-        return userService.findAll();
+        logger.info("Пришел запрос GET /users");
+        Collection<User> response = userService.findAll();
+        logger.info("Отправлен ответ GET /users с телом {}", response);
+        return response;
     }
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable long id) {
-        return userService.getUser(id);
+        logger.info("Пришел запрос GET /users/{}", id);
+        User response = userService.getUser(id);
+        logger.info("Отправлен ответ GET /users/{} с телом {}", id, response);
+        return response;
     }
 
     @GetMapping("/{id}/friends")
     public Collection<User> getFriends(@PathVariable long id) {
-        return userService.getFriends(id);
+        logger.info("Пришел запрос GET /users/{}/friends", id);
+        Collection<User> response = userService.getFriends(id);
+        logger.info("Отправлен ответ GET /users/{}/friends с телом {}", id, response);
+        return response;
     }
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        logger.info("Пришел Post запрос /users с телом: {}", user);
-        logger.info("Отправлен ответ Post /users с телом: {}", user);
-        return userService.create(user);
+        logger.info("Пришел запрос POST /users с телом: {}", user);
+        User response = userService.create(user);
+        logger.info("Отправлен ответ POST /users с телом: {}", response);
+        return response;
     }
 
     @PutMapping
     public User update(@Valid @RequestBody User newUser) {
-        logger.info("Пришел запрос Put /users с телом: {}", newUser);
-        logger.info("Отправлен ответ Put /users с телом: {}", newUser);
-        return userService.update(newUser);
+        logger.info("Пришел запрос PUT /users с телом: {}", newUser);
+        User response = userService.update(newUser);
+        logger.info("Отправлен ответ PUT /users с телом: {}", response);
+        return response;
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public User addFriend(
-            @PathVariable long id,
-            @PathVariable long friendId
-    ) {
-        return userService.addFriend(id, friendId);
+    public User addFriend(@PathVariable long id, @PathVariable long friendId) {
+        logger.info("Пришел запрос PUT /users/{}/friends/{}", id, friendId);
+        User response = userService.addFriend(id, friendId);
+        logger.info("Отправлен ответ PUT /users/{}/friends/{} с телом {}", id, friendId, response);
+        return response;
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public User deleteFriend(
-            @PathVariable long id,
-            @PathVariable long friendId
-    ) {
-        return userService.deleteFriend(id, friendId);
+    public User deleteFriend(@PathVariable long id, @PathVariable long friendId) {
+        logger.info("Пришел запрос DELETE  /users/{}/friends/{}", id, friendId);
+        User response = userService.deleteFriend(id, friendId);
+        logger.info("Отправлен ответ DELETE /users/{}/friends/{} телом {}", id, friendId, response);
+        return response;
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public Collection<User> getIntersectionFriends(
-            @PathVariable long id,
-            @PathVariable long otherId
-    ) {
-        Collection<User> user1Friends = userService.getFriends(id);
-        Collection<User> user2Friends = userService.getFriends(otherId);
-        user1Friends.retainAll(user2Friends);
-        return user1Friends;
+    public Collection<User> getIntersectionFriends(@PathVariable long id, @PathVariable long otherId) {
+        logger.info("Пришел запрос GET /users/{}/friends/common/{}", id, otherId);
+        Collection<User> response = userService.getIntersectionFriends(id, otherId);
+        logger.info("Отправлен ответ GET /users/{}/friends/common/{} с телом {}", id, otherId, response);
+        return response;
     }
 
 }

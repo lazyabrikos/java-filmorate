@@ -1,13 +1,13 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 public class UserService {
 
@@ -34,14 +34,36 @@ public class UserService {
     }
 
     public User addFriend(long id, long friendId) {
-        return userStorage.addFriend(id, friendId);
+        User user = userStorage.getUser(id);
+        User friend = userStorage.getUser(friendId);
+
+        user.getFriends().add(friendId);
+        friend.getFriends().add(id);
+
+        return user;
     }
 
     public Collection<User> getFriends(long id) {
-        return userStorage.getFriends(id);
+        User user = userStorage.getUser(id);
+        Set<Long> userFriends = user.getFriends();
+        return userFriends.stream()
+                .map(userStorage::getUser)
+                .collect(Collectors.toList());
     }
 
     public User deleteFriend(long id, long friendId) {
-        return userStorage.deleteFriend(id, friendId);
+
+        User user = userStorage.getUser(id);
+        user.getFriends().remove(friendId);
+        User friend = userStorage.getUser(friendId);
+        friend.getFriends().remove(id);
+        return user;
+    }
+
+    public Collection<User> getIntersectionFriends(long id, long otherId) {
+        Collection<User> user1Friends = getFriends(id);
+        Collection<User> user2Friends = getFriends(otherId);
+        user1Friends.retainAll(user2Friends);
+        return user1Friends;
     }
 }
