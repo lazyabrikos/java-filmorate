@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -8,6 +9,8 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.validators.ValidReleaseDate;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Film.
@@ -16,6 +19,8 @@ import java.time.LocalDate;
 public class Film {
 
     private Long id;
+    @JsonIgnore
+    private Set<Long> likes = new HashSet<>();
 
     @NotBlank(message = "Name could not be blank.")
     private String name;
