@@ -24,7 +24,6 @@ public class FilmController {
     @GetMapping("/{id}")
     public Film getFilm(@PathVariable long id) {
         logger.info("Пришел запрос GET /films/{}", id);
-        logger.info("Пришел запрос GET /films/{}", id);
         Film response = filmService.getFilm(id);
         logger.info("Отправлен ответ GET /films/{} с телом {}", id, response);
         return response;
@@ -72,9 +71,9 @@ public class FilmController {
 
     @GetMapping("/popular")
     public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "10") long count) {
-        logger.info("Пришел запрос PUT /films/popular с параметром count = {}", count);
+        logger.info("Пришел запрос GET /films/popular с параметром count = {}", count);
         Collection<Film> response = filmService.getPopularFilms(count);
-        logger.info("Отправлен ответ PUT /films/popular с телом {}", response);
+        logger.info("Отправлен ответ GET /films/popular с телом {}", response);
         return response;
     }
 }

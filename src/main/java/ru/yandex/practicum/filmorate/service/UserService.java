@@ -1,20 +1,23 @@
 package ru.yandex.practicum.filmorate.service;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.FriendsStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
     private final UserStorage userStorage;
+    private final FriendsStorage friendsStorage;
 
-    public UserService(UserStorage userStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage, FriendsStorage friendsStorage) {
         this.userStorage = userStorage;
+        this.friendsStorage = friendsStorage;
     }
 
     public Collection<User> findAll() {
@@ -30,34 +33,28 @@ public class UserService {
     }
 
     public User update(User newUser) {
+        User user = userStorage.getUser(newUser.getId());
         return userStorage.update(newUser);
     }
 
-    public User addFriend(long id, long friendId) {
+    public void addFriend(long id, long friendId) {
         User user = userStorage.getUser(id);
         User friend = userStorage.getUser(friendId);
-
-        user.getFriends().add(friendId);
-        friend.getFriends().add(id);
-
-        return user;
+        friendsStorage.addFriend(id, friendId);
     }
 
     public Collection<User> getFriends(long id) {
         User user = userStorage.getUser(id);
-        Set<Long> userFriends = user.getFriends();
-        return userFriends.stream()
+        return friendsStorage.getFriendsIds(id).stream()
                 .map(userStorage::getUser)
                 .collect(Collectors.toList());
     }
 
-    public User deleteFriend(long id, long friendId) {
+    public void deleteFriend(long id, long friendId) {
 
         User user = userStorage.getUser(id);
-        user.getFriends().remove(friendId);
         User friend = userStorage.getUser(friendId);
-        friend.getFriends().remove(id);
-        return user;
+        friendsStorage.removeFriend(id, friendId);
     }
 
     public Collection<User> getIntersectionFriends(long id, long otherId) {

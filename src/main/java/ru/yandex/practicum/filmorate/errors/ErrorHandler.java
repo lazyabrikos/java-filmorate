@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import ru.yandex.practicum.filmorate.exceptions.IncorrectFieldException;
 import ru.yandex.practicum.filmorate.exceptions.NegativeValueException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 
@@ -53,6 +54,12 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleServerErrors(final Exception e) {
         return new ErrorResponse("Something went wrong", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIncorrectParameter(final IncorrectFieldException e) {
+        return new ErrorResponse("Incorrect field", e.getMessage());
     }
 
 }

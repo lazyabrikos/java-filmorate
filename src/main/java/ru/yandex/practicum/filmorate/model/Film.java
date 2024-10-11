@@ -6,9 +6,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validators.ValidReleaseDate;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,6 +19,7 @@ import java.util.Set;
  * Film.
  */
 @Data
+@NoArgsConstructor
 public class Film {
 
     private Long id;
@@ -33,13 +37,20 @@ public class Film {
     private LocalDate releaseDate;
 
     @Positive(message = "Duration must be positive.")
-    private int duration;
+    private Long duration;
 
-    public Film(String name, String description, LocalDate releaseDate, int duration) {
+    private Mpa mpa;
+
+    private Collection<Genre> genres = new ArrayList<>();
+
+    public Film(String name, String description, LocalDate releaseDate,
+                Long duration, Mpa mpa, Collection<Genre> genres) {
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+        this.mpa = mpa;
+        this.genres = genres;
     }
 
 }

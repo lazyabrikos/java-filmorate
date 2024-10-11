@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -61,19 +62,18 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public User addFriend(@PathVariable long id, @PathVariable long friendId) {
+    @ResponseStatus(HttpStatus.OK)
+    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
         logger.info("Пришел запрос PUT /users/{}/friends/{}", id, friendId);
-        User response = userService.addFriend(id, friendId);
-        logger.info("Отправлен ответ PUT /users/{}/friends/{} с телом {}", id, friendId, response);
-        return response;
+        userService.addFriend(id, friendId);
+        logger.info("У пользователя с id = {} добавлен друг с id = {}", id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public User deleteFriend(@PathVariable long id, @PathVariable long friendId) {
+    public void deleteFriend(@PathVariable long id, @PathVariable long friendId) {
         logger.info("Пришел запрос DELETE  /users/{}/friends/{}", id, friendId);
-        User response = userService.deleteFriend(id, friendId);
-        logger.info("Отправлен ответ DELETE /users/{}/friends/{} телом {}", id, friendId, response);
-        return response;
+        userService.deleteFriend(id, friendId);
+        logger.info("У пользователя с id = {} удален друг с id = {}", id, friendId);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")

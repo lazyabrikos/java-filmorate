@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validators.NoSpaces;
 
 import java.time.LocalDate;
@@ -13,9 +14,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@NoArgsConstructor
 public class User {
 
     private Long id;
+
     @JsonIgnore
     private Set<Long> friends = new HashSet<>();
 
