@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 @Repository
