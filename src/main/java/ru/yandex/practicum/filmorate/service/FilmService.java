@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.IncorrectFieldException;
@@ -13,28 +14,20 @@ import ru.yandex.practicum.filmorate.storage.genres.GenreDbStorage;
 import ru.yandex.practicum.filmorate.storage.likes.LikeStorage;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserService userService;
-    private final LikeStorage likeDbStorage;
+    private final LikeStorage likeStorage;
     private final MpaService mpaService;
     private final GenreService genreService;
-
-    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
-                       UserService userService, MpaService mpaService,
-                       GenreDbStorage genreDbStorage, LikeStorage likeDbStorage, GenreService genreService) {
-        this.filmStorage = filmStorage;
-        this.userService = userService;
-        this.mpaService = mpaService;
-        this.likeDbStorage = likeDbStorage;
-        this.genreService = genreService;
-    }
 
     public Collection<Film> findAll() {
         return filmStorage.findAll();
@@ -50,21 +43,16 @@ public class FilmService {
         Set<Long> genresIds = film.getGenres().stream()
                 .map(Genre::getId)
                 .collect(Collectors.toSet());
-        List<Genre> genres;
-        try {
-            genres = genresIds.stream()
-                    .map(genreService::getById)
-                    .toList();
-        } catch (NotFoundException e) {
+        List<Genre> genres = genreService.getGenresByIds(genresIds);
+
+        if (genres.size() != genresIds.size()) {
             throw new IncorrectFieldException("Введен неправильный жанр");
         }
 
         film = filmStorage.create(film);
-        System.out.println(genresIds);
-        System.out.println(genres);
         genreService.insertFilmAndGenres(film.getId(), genresIds);
         film.setMpa(mpa);
-        film.setGenres(genres);
+        film.setGenres(new LinkedHashSet<>(genres));
         return film;
 
     }
@@ -81,18 +69,15 @@ public class FilmService {
         Set<Long> genresIds = newFilm.getGenres().stream()
                 .map(Genre::getId)
                 .collect(Collectors.toSet());
-        List<Genre> genres;
-        try {
-            genres = genresIds.stream()
-                    .map(genreService::getById)
-                    .toList();
-        } catch (NotFoundException e) {
+        List<Genre> genres = genreService.getGenresByIds(genresIds);
+
+        if (genresIds.size() != genres.size()) {
             throw new IncorrectFieldException("Введен неправильный жанр");
         }
 
         genreService.update(newFilm.getId(), genresIds);
         newFilm = filmStorage.update(newFilm);
-        newFilm.setGenres(genres);
+        newFilm.setGenres(new LinkedHashSet<>(genres));
         newFilm.setMpa(mpa);
         return newFilm;
     }
@@ -106,23 +91,22 @@ public class FilmService {
             throw new IncorrectFieldException("Введен неправильный рейтинг MPA");
         }
         Collection<Genre> genres = genreService.getGenresForOneFilm(film.getId());
-        film.setGenres(genres);
+        film.setGenres(new LinkedHashSet<>(genres));
         film.setMpa(mpa);
-        System.out.println(film);
         return film;
     }
 
     public Film addLike(long id, long userId) {
         User user = userService.getUser(userId);
         Film film = filmStorage.getFilm(id);
-        likeDbStorage.addLike(userId, id);
+        likeStorage.addLike(userId, id);
         return film;
     }
 
     public Film deleteLike(long id, long userId) {
         User user = userService.getUser(userId);
         Film film = filmStorage.getFilm(id);
-        likeDbStorage.deleteLike(userId, id);
+        likeStorage.deleteLike(userId, id);
         return film;
     }
 

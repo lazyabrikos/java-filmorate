@@ -32,7 +32,6 @@ create table if not exists friendship
 (
     user_id int,
     friend_id int,
-    relation_accept varchar,
     foreign key (user_id) references users(id) on delete cascade,
     foreign key (friend_id) references users(id) on delete cascade,
     primary key (user_id, friend_id)
@@ -66,3 +65,6 @@ create table if not exists film_genres
     foreign key (genre_id) references genres(id) on delete cascade,
     primary key (film_id, genre_id)
 );
+
+create unique index if not exists USER_EMAIL_INDEX on USERS (email);
+create unique index if not exists USER_LOGIN_INDEX on USERS (login);

@@ -20,7 +20,6 @@ public class MpaDbStorage implements MpaStorage {
     @Override
     public Mpa getMpaById(long id) {
         try {
-
             return jdbcTemplate.queryForObject(FIND_MPA_BY_ID, mpaRowMapper, id);
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException("Введен неправильный рейтинг MPA");

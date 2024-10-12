@@ -3,13 +3,15 @@ package ru.yandex.practicum.filmorate.storage.genres;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 
-import java.util.Collection;
-import java.util.Set;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.*;
 
 
 @Repository
@@ -24,6 +26,7 @@ public class GenreDbStorage implements GenreStorage {
             "WHERE film_id = ?";
     private static final String GET_GENRES_FOR_ONE_FILM = "SELECT g.id, g.NAME FROM film_genres fg " +
             "LEFT JOIN GENRES g ON fg.GENRE_ID = g.id WHERE fg.FILM_ID = ?";
+    private static final String GET_GENRES_BY_IDS = "SELECT id, name FROM genres WHERE id in (%S)";
 
     @Override
     public Genre getGenreById(long id) {
@@ -44,6 +47,24 @@ public class GenreDbStorage implements GenreStorage {
         for (Long id : genresId) {
             jdbcTemplate.update(INSERT_GENRES_QUERY, filmId, id);
         }
+
+        jdbcTemplate.batchUpdate(
+                "MERGE INTO film_genres (film_id, genre_id) KEY (film_id, genre_id) VALUES (?,?)",
+                new BatchPreparedStatementSetter() {
+
+                    private final List<Long> genresIdList = new ArrayList<>(genresId);
+
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        ps.setLong(1, filmId);
+                        ps.setLong(2, genresIdList.get(i));
+                    }
+
+                    public int getBatchSize() {
+                        return genresId.size();
+                    }
+
+                });
+
     }
 
     @Override
@@ -55,5 +76,11 @@ public class GenreDbStorage implements GenreStorage {
     @Override
     public Collection<Genre> getGenresForFilm(Long filmId) {
         return jdbcTemplate.query(GET_GENRES_FOR_ONE_FILM, genreRowMapper, filmId);
+    }
+
+    @Override
+    public List<Genre> getGenresByIds(Set<Long> genresIds) {
+        String inSql = String.join(",", Collections.nCopies(genresIds.size(), "?"));
+        return jdbcTemplate.query(String.format(GET_GENRES_BY_IDS, inSql), genreRowMapper, genresIds.toArray());
     }
 }

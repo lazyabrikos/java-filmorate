@@ -16,7 +16,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,7 +33,7 @@ public class FilmServiceTest {
             LocalDate.now(),
             100L,
             new Mpa(1L, null),
-            List.of(new Genre(1L, null))
+            Set.of(new Genre(1L, null))
     );
     private Film newFilm;
 
