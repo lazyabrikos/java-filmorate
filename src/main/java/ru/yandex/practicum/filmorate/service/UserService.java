@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.FriendsStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -21,7 +22,7 @@ public class UserService {
     }
 
     public User getUser(long id) {
-        return userStorage.getUser(id);
+        return userStorage.getUser(id).orElseThrow(() -> new NotFoundException("Пользователь не найден с id = " + id));
     }
 
     public User create(User user) {
@@ -29,27 +30,28 @@ public class UserService {
     }
 
     public User update(User newUser) {
-        User user = userStorage.getUser(newUser.getId());
+        User user = getUser(newUser.getId());
         return userStorage.update(newUser);
     }
 
     public void addFriend(long id, long friendId) {
-        User user = userStorage.getUser(id);
-        User friend = userStorage.getUser(friendId);
+        User user = getUser(id);
+        User friend = getUser(friendId);
         friendsStorage.addFriend(id, friendId);
     }
 
     public Collection<User> getFriends(long id) {
-        User user = userStorage.getUser(id);
+        User user = getUser(id);
         return friendsStorage.getFriendsIds(id).stream()
-                .map(userStorage::getUser)
+                .map(fiendId -> userStorage.getUser(fiendId)
+                        .orElseThrow(() -> new NotFoundException("Пользователь не найден с id = " + fiendId)))
                 .collect(Collectors.toList());
     }
 
     public void deleteFriend(long id, long friendId) {
 
-        User user = userStorage.getUser(id);
-        User friend = userStorage.getUser(friendId);
+        User user = getUser(id);
+        User friend = getUser(friendId);
         friendsStorage.removeFriend(id, friendId);
     }
 

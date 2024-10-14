@@ -2,14 +2,13 @@ package ru.yandex.practicum.filmorate.storage.genres;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -29,12 +28,10 @@ public class GenreDbStorage implements GenreStorage {
     private static final String GET_GENRES_BY_IDS = "SELECT id, name FROM genres WHERE id in (%S)";
 
     @Override
-    public Genre getGenreById(long id) {
-        try {
-            return jdbcTemplate.queryForObject(FIND_GENRE_BY_ID, genreRowMapper, id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException("Жанр не найден с id = " + id);
-        }
+    public Optional<Genre> getGenreById(long id) {
+        return jdbcTemplate.query(FIND_GENRE_BY_ID,
+                (ResultSet rs) -> rs.next() ?
+                        Optional.ofNullable(genreRowMapper.mapRow(rs, 1)) : Optional.empty(), id);
     }
 
     @Override
@@ -44,12 +41,8 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public void insertFilmAndGenres(long filmId, Set<Long> genresId) {
-        for (Long id : genresId) {
-            jdbcTemplate.update(INSERT_GENRES_QUERY, filmId, id);
-        }
-
         jdbcTemplate.batchUpdate(
-                "MERGE INTO film_genres (film_id, genre_id) KEY (film_id, genre_id) VALUES (?,?)",
+                "MERGE   INTO film_genres (film_id, genre_id) KEY (film_id, genre_id) VALUES (?,?)",
                 new BatchPreparedStatementSetter() {
 
                     private final List<Long> genresIdList = new ArrayList<>(genresId);

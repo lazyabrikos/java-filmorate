@@ -11,9 +11,11 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -59,11 +61,10 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User getUser(long id) {
-        try {
-            return jdbcTemplate.queryForObject(FIND_BY_ID_QUERY, userRowMapper, id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException("Пользователь не найден с id = " + id);
-        }
+    public Optional<User> getUser(long id) {
+        return jdbcTemplate.query(FIND_BY_ID_QUERY,
+                (ResultSet rs) -> rs.next() ?
+                        Optional.ofNullable(userRowMapper.mapRow(rs, 1)) : Optional.empty(), id);
+
     }
 }

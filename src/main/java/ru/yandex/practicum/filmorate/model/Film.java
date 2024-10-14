@@ -34,6 +34,7 @@ public class Film {
     @ValidReleaseDate(message = "Release date could not be earlier then December 28, 1985")
     private LocalDate releaseDate;
 
+    @NotNull
     @Positive(message = "Duration must be positive.")
     private Long duration;
 

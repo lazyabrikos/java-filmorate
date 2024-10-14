@@ -81,7 +81,7 @@ public class FilmService {
     }
 
     public Film getFilm(long id) {
-        Film film = filmStorage.getFilm(id);
+        Film film = filmStorage.getFilm(id).orElseThrow(() -> new NotFoundException("Фильм не найдем с id = " + id));
         Mpa mpa;
         try {
             mpa = mpaService.getById(film.getMpa().getId());
@@ -96,14 +96,14 @@ public class FilmService {
 
     public Film addLike(long id, long userId) {
         User user = userService.getUser(userId);
-        Film film = filmStorage.getFilm(id);
+        Film film = getFilm(id);
         likeStorage.addLike(userId, id);
         return film;
     }
 
     public Film deleteLike(long id, long userId) {
         User user = userService.getUser(userId);
-        Film film = filmStorage.getFilm(id);
+        Film film = getFilm(id);
         likeStorage.deleteLike(userId, id);
         return film;
     }

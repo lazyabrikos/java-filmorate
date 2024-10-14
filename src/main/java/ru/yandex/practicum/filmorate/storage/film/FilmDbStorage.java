@@ -10,9 +10,11 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -72,12 +74,10 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilm(long id) {
-        try {
-            return jdbcTemplate.queryForObject(FIND_BY_ID, filmRowMapper, id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException("Фильм не найдем с id = " + id);
-        }
+    public Optional<Film> getFilm(long id) {
+        return jdbcTemplate.query(FIND_BY_ID,
+                (ResultSet rs) -> rs.next() ?
+                        Optional.ofNullable(filmRowMapper.mapRow(rs, 1)) : Optional.empty(), id);
     }
 
     @Override
