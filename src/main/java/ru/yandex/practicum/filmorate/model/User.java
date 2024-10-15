@@ -1,32 +1,33 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validators.NoSpaces;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
+@NoArgsConstructor
 public class User {
 
     private Long id;
-    @JsonIgnore
-    private Set<Long> friends = new HashSet<>();
 
     @NotBlank(message = "Email could not be blank")
     @Email(message = "Wrong format of email")
+    @Size(max = 255)
     private String email;
 
     @NotBlank(message = "Login could not be blank.")
     @NoSpaces(message = "Login could not contain spaces")
+    @Size(max = 255)
     private String login;
 
+    @Size(max = 255)
     private String name;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
